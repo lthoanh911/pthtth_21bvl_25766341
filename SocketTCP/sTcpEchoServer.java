@@ -1,37 +1,36 @@
 package SocketTCP;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class sTcpEchoServer {
+    public final static int serverPort = 6789;
+
     public static void main(String[] args) {
         try {
-
-            ServerSocket ss = new ServerSocket(6789);
-            System.out.println("SERVER da duoc tao");
-
+            ServerSocket ss = new ServerSocket(serverPort);
+            System.out.println("Server da duoc tao");
             while (true) {
-
-                Socket s = ss.accept();
-
-                InputStream is = s.getInputStream();
-                OutputStream os = s.getOutputStream();
-
-                int ch = 0;
-                while (true) {
-                    ch = is.read();
-                    if (ch == -1) {
-                        break;
+                try {
+                    Socket s = ss.accept();
+                    OutputStream os = s.getOutputStream();
+                    InputStream is = s.getInputStream();
+                    int ch = 0;
+                    while (true) {
+                        ch = is.read();
+                        if (ch == -1)
+                            break;
+                        System.out.println((char) ch);
+                        os.write(ch);
                     }
-                    System.out.println((char) ch);
-                    os.write(ch);
+                    s.close();
+                } catch (IOException ie1) {
+                    System.out.println("Connection Error: " + ie1);
                 }
-                // s.close(); // Đóng socket của client sau khi hoàn thành
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException ie) {
+            System.out.println("Server Creation Error: " + ie);
         }
     }
 }
